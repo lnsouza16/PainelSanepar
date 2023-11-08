@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Gerar Senha</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #e6f7ff;
+            padding: 20px;
+        }
+
+        h2 {
+            color: #005b96;
+        }
+
+        button {
+            background-color: #0080ff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #0059b3;
+        }
+
+        #fila {
+            margin-top: 20px;
+            border: 1px solid #005b96;
+            padding: 10px;
+        }
+
+        #fila li {
+            background-color: #b3d1ff;
+            margin-bottom: 10px;
+            padding: 10px;
+        }
+		
+		.radio-group {
+			display: flex;
+			align-items: center;
+			margin-bottom: 10px;
+		}
+
+		.radio-group label {
+			margin-left: 10px;
+		}
+    </style>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+	
+    <script>
+	        $(document).ready(function(){
+            $('#gerar').click(function(){
+                let senha = $('#senha').val();
+                let tipo = $("input[name='tipo']:checked").val();
+                $.get(`/gerar_senha?senha=${senha}&tipo=${tipo}`, function(data){
+                    alert(data);
+                    location.reload();
+                });
+            });
+
+            setInterval(function() {
+                $('#fila').load('/fila_senhas');
+            }, 1000);
+        });
+    </script>
+</head>
+<body>
+
+<h2>Gerar Senha</h2>
+
+<input type="number" id="senha" placeholder="Número da senha (opcional)">
+<div class="radio-group">
+	<input type="radio" id="normal" name="tipo" value="normal" checked>
+	<label for="normal">Normal</label>
+</div>
+<div class="radio-group">
+	<input type="radio" id="preferencial" name="tipo" value="preferencial">
+	<label for="preferencial">Preferencial</label>
+</div>
+<button id="gerar">Gerar Senha</button>
+
+<h2>Fila de Senhas:</h2>
+<div id="fila"></div>
+<iframe src="https://deadsimplechat.com/6nrVOkJYE" width="100%" height="600px"></iframe>
+</body>
+</html>

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background-color: #e6f7ff;
+    padding: 20px;
+}
+
+h2 {
+    color: #005b96;
+}
+
+input[type="number"], button {
+    background-color: #0080ff;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+
+input[type="number"] {
+    width: 200px;
+}
+
+button:hover {
+    background-color: #0059b3;
+}
+
+#fila, #status {
+    margin-top: 20px;
+    border: 1px solid #005b96;
+    padding: 10px;
+}
+
+#fila div, #status div {
+    background-color: #b3d1ff;
+    margin-bottom: 10px;
+    padding: 10px;
+}
+
+</style>
+    <title>Chamar Senha</title>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+	
+    <script>
+	
+        $(document).ready(function(){
+            // Carregar o número da mesa do cookie
+            var mesa = localStorage.getItem('mesa');
+            if (mesa) {
+                $('#mesa').val(mesa);
+            }
+
+            $('#chamar').click(function(){
+                let mesa = $('#mesa').val();
+                // Armazenar o número da mesa no cookie
+                localStorage.setItem('mesa', mesa);
+                $.get(`/chamar_senha?mesa=${mesa}`, function(data){
+                    alert(data);
+                    location.reload();
+                });
+            });
+
+            $('#chegou').click(function(){
+                let mesa = $('#mesa').val();
+                $.get(`/cliente_chegou?mesa=${mesa}`, function(data){
+                    alert(data);
+                    location.reload();
+                });
+            });
+
+            $('#atendido').click(function(){
+                let mesa = $('#mesa').val();
+                $.get(`/cliente_atendido?mesa=${mesa}`, function(data){
+                    alert(data);
+                    location.reload();
+                });
+            });
+
+            setInterval(function() {
+                $('#fila').load('/fila_senhas');
+                let mesa = $('#mesa').val();
+                $.get(`/status_mesa?mesa=${mesa}`, function(data){
+                    $('#status').text(data);
+                });
+            }, 1000);
+        });
+    </script>
+</head>
+<body>
+
+<h2>Chamar Senha</h2>
+
+<input type="number" id="mesa" placeholder="Número da mesa">
+<button id="chamar">Chamar Senha</button>
+
+<button id="chegou">Cliente Chegou</button>
+
+<button id="atendido">Cliente Atendido</button>
+
+<h2>Fila de Senhas:</h2>
+<div id="fila"></div>
+
+<h2>Status da Mesa:</h2>
+<div id="status"></div>
+<iframe src="https://deadsimplechat.com/6nrVOkJYE" width="100%" height="600px"></iframe>
+</body>
+</html>
