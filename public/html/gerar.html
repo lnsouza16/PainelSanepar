@@ -51,13 +51,14 @@
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 	
     <script>
-	        $(document).ready(function(){
+        $(document).ready(function(){
             $('#gerar').click(function(){
                 let senha = $('#senha').val();
                 let tipo = $("input[name='tipo']:checked").val();
                 $.get(`/gerar_senha?senha=${senha}&tipo=${tipo}`, function(data){
                     alert(data);
-                    location.reload();
+                    // Atualizar apenas a div de fila
+                    $('#fila').load('/fila_senhas');
                 });
             });
 

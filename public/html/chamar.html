@@ -61,7 +61,8 @@ button:hover {
                 localStorage.setItem('mesa', mesa);
                 $.get(`/chamar_senha?mesa=${mesa}`, function(data){
                     alert(data);
-                    location.reload();
+                    // Atualizar apenas a div de fila
+                    $('#fila').load('/fila_senhas');
                 });
             });
 
@@ -69,7 +70,8 @@ button:hover {
                 let mesa = $('#mesa').val();
                 $.get(`/cliente_chegou?mesa=${mesa}`, function(data){
                     alert(data);
-                    location.reload();
+                    // Atualizar apenas a div de fila
+                    $('#fila').load('/fila_senhas');
                 });
             });
 
@@ -77,7 +79,8 @@ button:hover {
                 let mesa = $('#mesa').val();
                 $.get(`/cliente_atendido?mesa=${mesa}`, function(data){
                     alert(data);
-                    location.reload();
+                    // Atualizar apenas a div de fila
+                    $('#fila').load('/fila_senhas');
                 });
             });
 

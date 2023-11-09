@@ -18,6 +18,14 @@ for (let mesa in todasAsMesas) {
     contadorSenhasMesa[mesa] = 0;
 }
 
+// Função para formatar a hora
+function formatarHora(data) {
+    const horas = data.getHours().toString().padStart(2, '0');
+    const minutos = data.getMinutes().toString().padStart(2, '0');
+    const segundos = data.getSeconds().toString().padStart(2, '0');
+    return `${horas}:${minutos}:${segundos}`;
+}
+
 app.get('/gerar_senha', (req, res) => {
     let senhaEspecifica = req.query.senha;
     let tipo = req.query.tipo;
@@ -27,18 +35,14 @@ app.get('/gerar_senha', (req, res) => {
         senha++;
     }
     let horario = new Date();
-    let horas = horario.getHours();
-    let minutos = horario.getMinutes();
-    let segundos = horario.getSeconds();
-    let horarioFormatado = `${horas}:${minutos}:${segundos}`;
+    let horarioFormatado = formatarHora(horario);
     if (tipo === 'preferencial') {
-        filaPreferencial.push({senha: senha, horario: horarioFormatado});
+        filaPreferencial.push({ senha: senha, horario: horarioFormatado });
     } else {
-        filaNormal.push({senha: senha, horario: horarioFormatado});
+        filaNormal.push({ senha: senha, horario: horarioFormatado });
     }
     res.send(`Senha ${tipo} gerada: ${senha} às ${horarioFormatado}`);
 });
-
 // Altera a função '/chamar_senha()' para incrementar o contador de senhas da mesa
 app.get('/chamar_senha', (req, res) => {
     let mesa = req.query.mesa;
@@ -69,11 +73,13 @@ app.get('/cliente_chegou', (req, res) => {
     if (mesasComSenhasChamadas[mesa]) {
         mesasEmAtendimento[mesa] = true;
         inicioAtendimento[mesa] = Date.now();
-        let index = chamadas.findIndex(chamada => chamada.includes(`Mesa ${mesa}`));
+        let index = chamadas.findIndex((chamada) => chamada.includes(`Mesa ${mesa}`));
         if (index !== -1) {
             chamadas.splice(index, 1);
         }
-        res.send(`Cliente com senha ${mesasComSenhasChamadas[mesa]} chegou na Mesa ${mesa}`);
+        res.send(
+            `Cliente com senha ${mesasComSenhasChamadas[mesa]} chegou na Mesa ${mesa} às ${formatarHora(new Date())}`
+        );
     } else {
         res.send('Erro: Mesa não tem uma senha chamada');
     }
@@ -99,8 +105,11 @@ app.get('/status_mesas', (req, res) => {
         status += `<p>Mesa ${mesa}: `;
         if (!todasAsMesas[mesa]) {
             if (mesasEmAtendimento[mesa]) {
-                let tempoAtendimento = Math.floor((Date.now() - inicioAtendimento[mesa]) / 1000);
-                status += `Atendendo o cliente com a senha ${mesasComSenhasChamadas[mesa]} há ${tempoAtendimento} segundos</p>`;
+                let tempoAtendimento = Math.floor((Date.now() - inicioAtendimento[mesa]) / 1000); // Tempo em segundos
+                const horas = Math.floor(tempoAtendimento / 3600).toString().padStart(2, '0');
+                const minutos = Math.floor((tempoAtendimento % 3600) / 60).toString().padStart(2, '0');
+                const segundos = (tempoAtendimento % 60).toString().padStart(2, '0');
+                status += `Atendendo o cliente com a senha ${mesasComSenhasChamadas[mesa]} há ${horas}:${minutos}:${segundos}</p>`;
             } else {
                 status += `Chamou a senha ${mesasComSenhasChamadas[mesa]}, mas o cliente ainda não chegou</p>`;
             }
