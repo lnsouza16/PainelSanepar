@@ -127,6 +127,8 @@ app.get('/status_mesas', (req, res) => {
     res.send(status);
 });
 
+	
+	
 app.get('/fila_senhas', (req, res) => {
     let senhasPreferenciais = filaPreferencial.map(item => `Senha preferencial ${item.senha} gerada às ${item.horario}`).join('<br>');
     let senhasNormais = filaNormal.map(item => `Senha normal ${item.senha} gerada às ${item.horario}`).join('<br>');

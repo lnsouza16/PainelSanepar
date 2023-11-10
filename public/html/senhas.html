@@ -15,7 +15,7 @@ body {
 
 h2 {
     color: #005b96;
-	font-size: 90px;
+    font-size: 90px;
 }
 
 #senhas {
@@ -30,28 +30,40 @@ h2 {
     margin-bottom: 10px;
     padding: 10px;
 }
-
 </style>
-   
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-    <script>
-        $(document).ready(function(){
-            setInterval(function() {
-                $('#senhas').load('/senhas_chamadas');
-            }, 1000);
+
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script>
+$(document).ready(function() {
+    setInterval(function() {
+        $.get('/senhas_chamadas', function(data) {
+            var chamadas = data.split('<br>'); // Dividir as chamadas em um array
+            if (chamadas.length > 0) {
+                var ultimaChamada = chamadas[chamadas.length - 1];
+                var senhaMesa = ultimaChamada.split(' / ');
+                if (senhaMesa.length === 2) {
+                    var senha = senhaMesa[0].substring(6); // Remove "Senha " do início
+                    var mesa = senhaMesa[1].substring(5); // Remove "Mesa " do início
+                    speak(`Senha ${senha}, mesa ${mesa}`);
+                }
+            }
+            $('#senhas').html(data);
         });
-		
-		setInterval(function() {
-    $.get('/senhas_chamadas', function(data){
-        $('#senhas_chamadas').html(data);
-    });
-}, 1000);
-    </script>
+    }, 5000);
+});
+
+function speak(text) {
+    var utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'pt-BR'; // Define o idioma para português do Brasil
+    utterance.rate = 1.2;     // Aumenta a velocidade da fala
+    utterance.pitch = 1;      // Mantém o tom padrão
+    window.speechSynthesis.speak(utterance);
+}
+</script>
 </head>
 
 <body>
- <h2>Senhas sendo chamadas:</h2>
+<h2>Senhas sendo chamadas:</h2>
 <div id="senhas" style="font-size: 100px;"></div>
-
 </body>
 </html>
